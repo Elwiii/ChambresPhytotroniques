@@ -1,0 +1,12 @@
+formula for converting the returned values to voltage is shown below:
+{voltage} = ({value} / 4096) * {max range}
+For example, a returned value of 1319 (0x527) on a SeaI/O 470 module configured for
+a 0-10V range equals a voltage input of 3.22V.
+{voltage} = (1319 / 4096) * (10 V)
+{voltage} = 3.22 V
+
+
+If the {value} is less than or equal to 2048,
+{voltage} = {value} / 2048 * {max range}
+Else
+{voltage} = ({value} - 4096) / 2048 * {max range}

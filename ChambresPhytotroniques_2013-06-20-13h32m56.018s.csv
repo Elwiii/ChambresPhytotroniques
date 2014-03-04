@@ -1,0 +1,38 @@
+Résultat des chambre phytotroniques
+Tableau des Coefficients (sous forme A*x+B) :
+;A;B
+CO2;105,41;0,0
+O3;1,0;0,0
+Temperature0;1,0;0,0
+Temperature1;98,934547;-269,919342
+Temperature2;100,942123;-275,720703
+Temperature3;100,942123;-275,720703
+Temperature4;100,619186;-269,103394
+Temperature5;100,574715;-267,530426
+Temperature6;100,619186;-269,803375
+Temperature7;100,619186;-269,803375
+Temperature8;1,01715;1,01815
+Temperature9;1,01915;1,0215
+Temperature10;1,02115;1,02215
+Humidite0;1,0;0,0
+Humidite1;1,0;0,0
+Humidite2;1,0;0,0
+
+
+Temps de scrutation :
+;Temps de purge;Temps d'analyse
+Chambre 1;30;10
+Chambre 2;30;10
+Chambre 3;30;10
+Chambre 4;30;10
+Chambre 5;10;10
+Chambre 6;30;10
+Chambre 7;30;10
+Chambre 8;10;10
+Rejet sas;10;10
+Rejet extérieur 1;10;10
+Rejet extérieur 2;10;10
+
+
+Date;;Chambre 1;;;;;;;;Chambre 2;;;;;;;;Chambre 3;;;;;;;;Chambre 4;;;;;;;;Chambre 5;;;;;;;;Chambre 6;;;;;;;;Chambre 7;;;;;;;;Chambre 8;;;;;;;;Rejet sas;;;;;;;;Rejet extérieur 1;;;;;;;;Rejet extérieur 2;;;;;;;;
+;;;CO2;;O3;;Température;;Humidité;;CO2;;O3;;Température;;Humidité;;CO2;;O3;;Température;;Humidité;;CO2;;O3;;Température;;Humidité;;CO2;;O3;;Température;;Humidité;;CO2;;O3;;Température;;Humidité;;CO2;;O3;;Température;;Humidité;;CO2;;O3;;Température;;Humidité;;CO2;;O3;;Température;;Humidité;;CO2;;O3;;Température;;Humidité;;CO2;;O3;;Température;;Humidité;
