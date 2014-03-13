@@ -1,0 +1,9 @@
+2014/03/11 Philippe Carrara
+            * initialisation du paramètre "reference" dans SM_SetAnalogInputConfig
+              avec API_Sealevel470U.FLOATING et non API_Sealevel470U.ANOALOG
+              comme suggéré dans la documentation
+              (Bug: mesure des entrées analogique trés fluctuantes)
+            * intoduction d'un delai d'envoi avant emmission des requêtes
+              ajoût du paramètre DELAY_TO_SEND dans le fichier de configuration
+              (Bug:exception java à l'envoi, redamrrage de la centrale necessaire,
+               semble être un problème de gestion de flux, à confirmer) 
