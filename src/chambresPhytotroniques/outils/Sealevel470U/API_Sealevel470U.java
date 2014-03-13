@@ -30,10 +30,10 @@ public interface API_Sealevel470U extends Library{
     final static byte PLUS_MINUS_FIFTEEN  = 3;
     
     /* Voltage reference value */
-    final static byte ANALOG          = 0;
-    final static byte GROUND          = 1;
+    final static byte ANALOG          = 0; // errreur -14 (SeaMax 570u)
+    final static byte GROUND          = 1; // mesures analogique erratiques (SeaMax 570u)
     final static byte AD_REFERENCE    = 2;
-    final static byte FLOATING        = 3;
+    final static byte FLOATING        = 3; // mesures analogiques plus stables (SeaMax 570u)
     final static byte DA_CHANNEL_1    = 4;
     final static byte DA_CHANNEL_2    = 8;
     
@@ -42,53 +42,7 @@ public interface API_Sealevel470U extends Library{
     final static byte DIFFERENTIAL    = 1;
     final static byte CURRENT_LOOP    = 2;
     
-    // Original C code
-/*typedef struct _Point {
-  int x, y;
-} Point;
 
-Point* translate(Point* pt, int dx, int dy);
-
-// Equivalent JNA mapping
-class Point extends Structure { public int x, y; }
-Point translate(Point pt, int x, int y);
-...
-Point pt = new Point();
-Point result = translate(pt, 100, 100);
-* */
-    
-    /*
-     * typedef struct configuration
-{
-  int model;
-  int commType;
-  int baudrate;
-  int parity;
-  int firmware;
-} DeviceConfig;
-     */
-    
-    /*class DeviceConfig extends Structure{
-        public int model;
-        public int commType;
-        public int baudrate;
-        public int parity;
-        public int firmware;
-
-        @Override
-        protected List getFieldOrder() {
-            ArrayList<String> tab = new ArrayList<String>(5);
-            tab.add("model");
-            tab.add("commType");
-            tab.add("baudrate");
-            tab.add("parity");
-            tab.add("firmware");
-            return tab;
-        }
-    }
-    
-    int SM_GetDeviceConfig(int handle, DeviceConfig config );	
-    */
     
     /* quelques fonctions de l'API transposées pour le java */
    

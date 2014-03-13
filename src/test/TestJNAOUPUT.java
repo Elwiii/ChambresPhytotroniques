@@ -2,36 +2,42 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package chambresPhytotroniques.outils.Sealevel470U;
+package test;
 
-import chambresPhytotroniques.outils.Communication;
 import chambresPhytotroniques.outils.Configuration;
+import chambresPhytotroniques.outils.Sealevel470U.API_Sealevel470U;
+//import chambresPhytotroniques.outils.Sealevel470U.API_Sealevel470U.DeviceConfig;
+import com.sun.jna.Native;
+import com.sun.jna.ptr.DoubleByReference;
 import com.sun.jna.ptr.IntByReference;
-import static test.TestJNAOUPUT.send;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  *
- * @author CARRARA Nicolas
+ * @author John
  */
-public class CommunicationSealevel470U extends Communication{   
-    /**
+public class TestJNAOUPUT {
+
+    final static int BORNE = 1000;
+      /**
      * handler de la centrale 1
      */
-    private IntByReference seaMAXHandle1;
+    private static IntByReference seaMAXHandle1;
     /**
      * handler de la centrale 2
      */
-     private IntByReference seaMAXHandle2;
+     private static IntByReference seaMAXHandle2;
     
     /**
      * Interface de l'api de la central 470U
      */
-    private API_Sealevel470U lib;
+    private static API_Sealevel470U lib;
     
     /**
      * Retour d'erreur des fonctions de l'API
      */
-    private int err;
+    private static int err;
     
     /*
      * port de communication
@@ -45,8 +51,8 @@ public class CommunicationSealevel470U extends Communication{
     /**
      * intervals de mesure pour chaque entrée analogique
      */
-    private  byte[] inputRanges1;
-    private  byte[] inputRanges2;
+    private static byte[] inputRanges1;
+    private static byte[] inputRanges2;
     
     private static int HUMIDITE1234;
     private static int HUMIDITE5678;
@@ -76,12 +82,11 @@ public class CommunicationSealevel470U extends Communication{
     private static int INPUT_HUMIDITE5678;
     private static int INPUT_O3;
     private static int INPUT_CO2;
-    private static Long DELAY_TO_SEND;
 
      /**
       * initialise les constantes 
       */
-    public void initialisationConstantes(){
+    public static void initialisationConstantes(){
         System.out.println("INITIALISATION DES CONSTANTES");
         PORT1 = Integer.parseInt(Configuration.getConfiguration().getPropertie("PORT1"));
         PORT2 = Integer.parseInt(Configuration.getConfiguration().getPropertie("PORT2"));
@@ -111,16 +116,11 @@ public class CommunicationSealevel470U extends Communication{
         INPUT_SAS= Integer.parseInt(Configuration.getConfiguration().getPropertie("INPUT_SAS"));
         INPUT_HUMIDITE1234= Integer.parseInt(Configuration.getConfiguration().getPropertie("INPUT_HUMIDITE1234"));
         INPUT_HUMIDITE5678 = Integer.parseInt(Configuration.getConfiguration().getPropertie("INPUT_HUMIDITE5678"));
-        INPUT_O3 = Integer.parseInt(Configuration.getConfiguration().getPropertie("INPUT_O3"));
+        INPUT_O3= Integer.parseInt(Configuration.getConfiguration().getPropertie("INPUT_O3"));
         INPUT_CO2 = Integer.parseInt(Configuration.getConfiguration().getPropertie("INPUT_CO2"));
-        //DELAY_TO_SEND semble corriger un problème de gestion (plantage) de flux (à confirmer)
-        DELAY_TO_SEND = Long.parseLong(Configuration.getConfiguration().getPropertie("DELAY_TO_SEND"));
+
     }
-    
-    /**
-     * connexion aux centrales
-     */
-    public CommunicationSealevel470U(){
+    public static void main(String[] args){
         initialisationConstantes();
         seaMAXHandle1 = new IntByReference();
         lib = API_Sealevel470U.INSTANCE;
@@ -128,7 +128,7 @@ public class CommunicationSealevel470U extends Communication{
         if(err<0){
             chambresPhytotroniques.outils.Error.getError().error("CommunicationSealevel570U", "CommunicationSealevel570U","Impossible d'ouvrir de port "+PORT1, new Exception("Voir API , SM_Open erreur "+err));
         }
-        err = lib.SM_SetAnalogInputConfig(seaMAXHandle1.getValue(), API_Sealevel470U.FLOATING, API_Sealevel470U.SINGLE_ENDED);
+        err = lib.SM_SetAnalogInputConfig(seaMAXHandle1.getValue(), API_Sealevel470U.GROUND, API_Sealevel470U.SINGLE_ENDED);
         if(err<0){
             chambresPhytotroniques.outils.Error.getError().error("CommunicationSealevel570U", 
                     "CommunicationSealevel570U","Operation problématique "+"COM"+PORT1, 
@@ -138,20 +138,15 @@ public class CommunicationSealevel470U extends Communication{
         inputRanges1 = new byte[8];
         /* on configure les ranges d'input de +/-5V pour chaque analogue input */
         for(int i=0;i<8;i++){
-            inputRanges1[i] =  API_Sealevel470U.ZERO_TO_FIFTEEN ;
+            inputRanges1[i] =  API_Sealevel470U.PLUS_MINUS_FIFTEEN;
         }
-        try {
-                Thread.sleep(DELAY_TO_SEND);
-            } catch (Exception e) {
-                System.out.println(e);
-                }
         err =   lib.SM_SetAnalogInputRanges(seaMAXHandle1.getValue(), inputRanges1);
         if(err<0){
             chambresPhytotroniques.outils.Error.getError().error("CommunicationSealevel570U", 
                     "CommunicationSealevel570U","Operation problématique "+"COM"+PORT1, 
                     new Exception("Voir API , SM_SetAnalogInputRanges "+err));
         }
-
+        
         seaMAXHandle2 = new IntByReference();
         lib = API_Sealevel470U.INSTANCE;
         err = lib.SM_Open(seaMAXHandle2, "COM"+PORT2);
@@ -159,15 +154,7 @@ public class CommunicationSealevel470U extends Communication{
             chambresPhytotroniques.outils.Error.getError().error("CommunicationSealevel570U", "CommunicationSealevel570U","Impossible d'ouvrir de port "+PORT2, new Exception("Voir API , SM_Open erreur "+err));
         }
         /* configuration pour la reception de données analogiques */
-        try {
-              Thread.sleep(DELAY_TO_SEND);
-            } catch (Exception e) {
-                System.out.println(e);
-              }
-        //err = lib.SM_SetAnalogInputConfig(seaMAXHandle2.getValue(), API_Sealevel470U.ANALOG, API_Sealevel470U.SINGLE_ENDED);
-        byte analog =1;
-        err = lib.SM_SetAnalogInputConfig(seaMAXHandle2.getValue(), analog, API_Sealevel470U.SINGLE_ENDED);
-
+        err = lib.SM_SetAnalogInputConfig(seaMAXHandle2.getValue(), API_Sealevel470U.GROUND, API_Sealevel470U.SINGLE_ENDED);
         if(err<0){
             chambresPhytotroniques.outils.Error.getError().error("CommunicationSealevel570U", 
                     "CommunicationSealevel570U","Operation problématique "+"COM"+PORT2, 
@@ -178,27 +165,123 @@ public class CommunicationSealevel470U extends Communication{
         for(int i=0;i<8;i++){
             inputRanges2[i] =  API_Sealevel470U.PLUS_MINUS_FIFTEEN;
         }
-        try {
-            Thread.sleep(DELAY_TO_SEND);
-            } catch (Exception e) {
-                System.out.println(e);
-              }        
         err =   lib.SM_SetAnalogInputRanges(seaMAXHandle2.getValue(), inputRanges2);
         if(err<0){
             chambresPhytotroniques.outils.Error.getError().error("CommunicationSealevel570U", 
                     "CommunicationSealevel570U","Operation problématique "+"COM"+PORT2, 
                     new Exception("Voir API , SM_SetAnalogInputRanges "+err));
         }
-    
         
+        boolean b = true;
+        Scanner sc = new Scanner(System.in);
+        int channel;
+        int value;
+        while(b){
+            System.out.println("Output channel : ");
+            channel = sc.nextInt();//Integer.parseInt(sc.nextLine());
+            System.out.println("Valeur : ");
+            value = sc.nextInt(); //Integer.parseInt(sc.nextLine());
+            if(value != -1)
+                send(channel, value);
+            else
+                b=false;
+            
+        }
+        
+        
+        
+        /* test write */
+        /*testWriteDigitalOutput();*/
+        /*DeviceConfig d = new DeviceConfig();
+        err = lib.SM_GetDeviceConfig(seaMAXHandle.getValue(), d);
+        System.out.println("d : "+d);*/
+        
+        /* test read */
+       /* testReadAnalogInputs();*/
+        
+        /* fermeture du port de communication */
+        err = lib.SM_Close(seaMAXHandle1.getValue());
+        System.out.println("SM_Close : "+err);
+        
+        err = lib.SM_Close(seaMAXHandle2.getValue());
+        System.out.println("SM_Close : "+err);
+        
+
     }
     
-        /**
+    public static void testReadAnalogInputs(){
+        /*
+         * SM_SetAnalogInputConfig() & SM_SetAnalogInputRanges()
+            Control the analog-to-digital interface configuration
+            Valid Analog to Digital Voltage References are Ground (1) and Floating (3).
+            Valid Analog to Digital Channel Mode is Single Ended (0).
+            Valid Channel Range Values are +-5 (1) and +-15 (3).
+         */
+       
+        // Set the analog input mode
+        // GROUND OU FLOATING ?
+        err = lib.SM_SetAnalogInputConfig(seaMAXHandle1.getValue(), API_Sealevel470U.GROUND, API_Sealevel470U.SINGLE_ENDED);
+        System.out.println("SM_SetAnalogInputConfig : "+err);
+        
+        // Get the current analog input ranges
+        byte[] inputRanges = new byte[16];
+        for(int i=0;i<16;i++)
+            System.out.println("inputRanges["+i+"] = "+inputRanges[i]);
+        err = lib.SM_GetAnalogInputRanges(seaMAXHandle1.getValue(), inputRanges);
+        System.out.println("SM_GetAnalogInputRanges : "+err);
+        for(int i=0;i<16;i++)
+            System.out.println("next inputRanges["+i+"] = "+inputRanges[i]);
+       
+        /* on configure les ranges d'input de +/-5V pour chaque analogue input */
+        for(int i=0;i<8;i++){
+            inputRanges[i] =  API_Sealevel470U.PLUS_MINUS_FIFTEEN;
+        }
+        err =   lib.SM_SetAnalogInputRanges(seaMAXHandle1.getValue(), inputRanges);
+        System.out.println("SM_SetAnalogInputRanges : "+err);
+        // Read analog inputs 3 - 7
+        double[] inputs = new double[8];
+
+        //System.out.println("SM_ReadAnalogInputs : "+err);
+        for(int j=0;j<8;j++){
+            System.out.println("inputs["+j+"] : "+inputs[j]);
+        }
+        
+        ArrayList<Double> moyennes = new ArrayList<Double>();
+        for(int i=0;i<8;i++)
+            moyennes.add(0.);
+        
+        for(int j=0;j<BORNE;j++){
+            try{
+                //do what you want to do before sleeping
+                Thread.sleep(2000);//sleep for 1000 ms
+                //do what you want to do after sleeptig
+                
+              }
+            
+              catch(InterruptedException ie){
+              //If this thread was intrrupted by nother thread 
+              }
+            //err = lib.SM_ReadAnalogInputs(seaMAXHandle.getValue(), 0, 8, inputs, inputRanges, null);
+            /*System.out.println("SM_ReadAnalogInputs ("+j+") : "+err);*/
+            //DoubleByReference res;
+            //for(int k=0;k<8;k++){
+               // moyennes.set(k, moyennes.get(k)+inputs[k]);
+                //err = lib.SM_AtoDConversion(seaMAXHandle.getValue(), res, inputs[k], err);
+                /*System.out.println("next inputs["+k+"] : "+inputs[k]);*/
+            //}
+        }
+        for(int i=0;i<8;i++)
+            moyennes.set(i, moyennes.get(i)/BORNE);
+        System.out.println("moyennes : "+moyennes);
+    }
+    
+    /**
          * demande à la centrale de placer le bit numéro channel à la valeur choix (0 ou 1) de sa sortie digitale
          * @param channel
          * @param choix 
          */
-        public void send(int channel,int choix){
+       public static void send(int channel,int choix){
+            System.out.println("channel : "+channel);
             if(choix == OUVRIR){
                 for(int i=1;i<17;i++){
                     if(i!= channel){
@@ -206,7 +289,6 @@ public class CommunicationSealevel470U extends Communication{
                     }
                 }
             }
-            /* les channels sont numérotés de 1 à 16 */
             channel = channel - 1;
             IntByReference handle;
             if(channel>7){
@@ -222,301 +304,69 @@ public class CommunicationSealevel470U extends Communication{
             }else{
                 b=0;
             }
+            System.out.println("b : "+b);
+            System.out.println("b : "+b.byteValue());
+
             byte[] datab = {b.byteValue()};
-           /*dconfig = new IntByReference();
-            err = lib.SM_GetDeviceConfig(handle.getValue(), dconfig);
-            */
-            //System.out.println("SM_WriteDigitalOutputs: channel :"+channel+" datab:"+datab[0]);
-            try {
-                Thread.sleep(DELAY_TO_SEND);
-                } catch (Exception e) {
-              System.out.println(e);
-            }
             err = lib.SM_WriteDigitalOutputs(handle.getValue(), channel, 1, datab);
             if(err<0){
                 chambresPhytotroniques.outils.Error.getError().error("CommunicationSealevel570U", "send","Operation problématique : send("+channel+", "+choix+")", new Exception("Voir API , SM_WriteDigitalOutputs "+err));
             }
+            
         }
-        
-        /*private void closeOther(int channelNotClose){
+       
+       private void closeOther(int channelNotClose){
             for(int i=1;i<17;i++){
                 if(i!= channelNotClose){
                     send(i, FERMER);
                 }
             }
-        }*/
-           
-        
-        @Override
-	public void ouvrireHumidite1234() {
-            send(HUMIDITE1234, OUVRIR);
-	}
+        }
 
-        @Override
-	public void fermerHumidite1234() {
-            send(HUMIDITE1234, FERMER);
-	}
 
-        @Override
-	public void ouvrirHumidite5678() {
-            send(HUMIDITE5678, OUVRIR);
-	}
 
-        @Override
-	public void fermetureHumidite5678() {
-            send(HUMIDITE5678, FERMER);
-	}
+    public static void testWriteDigitalOutput(){
+    // Write to digital outputs 2 to 7
+           // 
+           // Turn on outputs 2, 4, 5 and 7, turn off outputs 3 and 6 (0x2D = 0010 1101)
+           byte[] datab = new byte[2]; //& 0xff
+           byte[] datab2 = new byte[2];
+           //datab[0] = 0x2D;
+           datab[0] = 0x7F;
+           //datab2[0] = (0x2D & 0xff);
+           datab[1] = 0x00;
+           /*String data = new String(datab);*/
+            datab2[0] = 0x00;
+           //datab2[0] = (0x2D & 0xff);
+           datab2[1] = 0x7F;
+           int err;
+          for(int i=0;i<100;i++){
+              System.out.println("i :"+ i);
+               if ((err = lib.SM_WriteDigitalOutputs(seaMAXHandle1.getValue(), 0,8, datab) )< 0)
+               {   
+                   System.out.println("Error writing outputs 0 through 7. : "+err);
+               }
+               try{
+                   //do what you want to do before sleeping
+                   Thread.sleep(5000);//sleep for 1000 ms
+                   //do what you want to do after sleeptig
+                 }
+                 catch(InterruptedException ie){
+                 //If this thread was intrrupted by nother thread 
+                 }
+               lib.SM_WriteDigitalOutputs(seaMAXHandle1.getValue(), 0, 8, datab2);
+               try{
+                   //do what you want to do before sleeping
+                   Thread.sleep(5000);//sleep for 1000 ms
+                   //do what you want to do after sleeptig
+                 }
+                 catch(InterruptedException ie){
+                 //If this thread was intrrupted by nother thread 
+                 }
 
-        @Override
-	public void fermetureHumiditeSas() {
-            send(HUMIDITE_SAS, FERMER);
-	}
-
-        @Override
-	public void ouvrirHumiditeSas() {
-            send(HUMIDITE_SAS, OUVRIR);
-	}
-
-	/**
-	 * Demande et retourne la valeur de l'humitité
-	 * 
-	 * @param numCabine
-	 * 
-	 * @return valeur de l'humidité
-	 */
-        @Override
-	public double getValue(int numCabine) {
-            /* si entre 1 et 8 retourner la temperature */
-            /* si 15 CO2 */
-            /* si 11 SAS */
-            /* si 12 humidite1234 */
-            /* si 13 humidite56789 */
-            /* si 14 O3 */
-            //numCabine = numCabine - 1;
-            double[] inputs = new double[8];
-            int valueHandle ;
-            int channel = 9999 ;
-            byte[] inputRanges ;
-            switch(numCabine){
-                case 1 : channel = INPUT_TEMPERATURE1;  break;
-                case 2 : channel = INPUT_TEMPERATURE2;  break;
-                case 3 : channel = INPUT_TEMPERATURE3;  break;
-                case 4 : channel = INPUT_TEMPERATURE4;  break;
-                case 5 : channel = INPUT_TEMPERATURE5;  break;
-                case 6 : channel = INPUT_TEMPERATURE6;  break;
-                case 7 : channel = INPUT_TEMPERATURE7;  break;
-                case 8 : channel = INPUT_TEMPERATURE8;  break;
-                case 11 : channel = INPUT_SAS;          break;
-                case 12 : channel = INPUT_HUMIDITE1234; break;
-                case 13 : channel = INPUT_HUMIDITE5678; break;
-                case 14 : channel = INPUT_O3;           break;
-                case 15 : channel = INPUT_CO2;           break;
-                default :
-                    chambresPhytotroniques.outils.Error.getError().error("CommunicationSealevel570U", "send","Operation problématique : getValue("+numCabine+")", new Exception("Numero de cabine incorrect"));
-                    break;
+               //lib.SM_ReadAnalogInputs(seaMAXHandle.getValue(), test, res, null, datab2, datab2);
             }
-
-            channel = channel -1;
-            if(channel < 8){
-                valueHandle = seaMAXHandle1.getValue();
-                inputRanges = inputRanges1;
-            }else{
-                valueHandle = seaMAXHandle2.getValue();
-                inputRanges = inputRanges2;
-                channel = channel - 8;
-            }
-            try {
-                Thread.sleep(DELAY_TO_SEND);
-                } catch (Exception e) {
-              System.out.println(e);
-            }
-            err = lib.SM_ReadAnalogInputs(valueHandle, 0, 8, inputs, inputRanges, null);
-            if(err<0){
-            chambresPhytotroniques.outils.Error.getError().error("CommunicationSealevel570U", 
-                    "getValue("+numCabine+")","Operation problématique", 
-                    new Exception("Voir API , SM_ReadAnalogInputs "+err));
-            }
-            return inputs[channel];
-	}
-
-	
-        @Override
-	public void positionnementValve(int x) {
-		switch (x) {
-		case 0:
-		case 1:
-			positionnementValve1();
-			break;
-
-		case 2:
-			positionnementValve2();
-			break;
-
-		case 3:
-			positionnementValve3();
-			break;
-
-		case 4:
-			positionnementValve4();
-			break;
-
-		case 5:
-			positionnementValve5();
-			break;
-
-		case 6:
-			positionnementValve6();
-			break;
-
-		case 7:
-			positionnementValve7();
-			break;
-
-		case 8:
-			positionnementValve8();
-			break;
-
-		case 9:
-			positionnementSas();
-			break;
-
-		case 10:
-			positionnementRejet1();
-			break;
-
-		case 11:
-			positionnementRejet2();
-			break;
-
-		default:
-			chambresPhytotroniques.outils.Error.getError().error("CommunicationSeaLevel570U", "positionnementValve",
-					"Valve " + x + " inexistante");
-			break;
-		}
-	}
-
-	/**
-	 * Positionne à la valve fermé
-	 */
-        @Override
-	public void fermetureTouteElectrovanne() {
-            send(VALVE1, FERMER);
-            send(VALVE2, FERMER);
-            send(VALVE3, FERMER);
-            send(VALVE4, FERMER);
-            send(VALVE5, FERMER);
-            send(VALVE6, FERMER);
-            send(VALVE7, FERMER);
-            send(VALVE8, FERMER);
-            send(POSITIONEMENT_SAS, FERMER);
-            send(REJET1, FERMER);
-            send(REJET2, FERMER);
-	}
-
-	/**
-	 * Positionne à la valve 1
-	 */
-        @Override
-	public void positionnementValve1() {
-            this.send(VALVE1, OUVRIR);
-	}
-
-	/**
-	 * Positionne à la valve 2
-	 */
-        @Override
-	public void positionnementValve2() {
-            this.send(VALVE2, OUVRIR);
-	}
-
-	/**
-	 * Positionne à la valve 3
-	 */
-        @Override
-	public void positionnementValve3() {
-            this.send(VALVE3, OUVRIR);
-	}
-
-	/**
-	 * Positionne à la valve 4
-	 */
-        @Override
-	public void positionnementValve4() {
-            this.send(VALVE4, OUVRIR);
-	}
-
-	/**
-	 * Positionne à la valve 5
-	 */
-        @Override
-	public void positionnementValve5() {
-            this.send(VALVE5, OUVRIR);
-	}
-
-	/**
-	 * Positionne à la valve 6
-	 */
-        @Override
-	public void positionnementValve6() {
-            this.send(VALVE6, OUVRIR);
-	}
-
-	/**
-	 * Positionne à la valve 7
-	 */
-        @Override
-	public void positionnementValve7() {
-            this.send(VALVE7, OUVRIR);
-	}
-
-	/**
-	 * Positionne à la valve 8
-	 */
-        @Override
-	public void positionnementValve8() {
-            this.send(VALVE8, OUVRIR);
-	}
-
-	/**
-	 * Positionne au sas
-	 */
-        @Override
-	public void positionnementSas() {
-            this.send(POSITIONEMENT_SAS, OUVRIR);
-	}
-
-	/**
-	 * Positionne au rejet 1
-	 */
-        @Override
-	public void positionnementRejet1() {
-            this.send(REJET1, OUVRIR);
-	}
-
-	/**
-	 * Positionne au rejet 2
-	 */
-        @Override
-	public void positionnementRejet2() {
-            this.send(REJET2, OUVRIR);
-	}
-
-
-
-	/**
-	 * Ouvre l'electrovanne 3 voies
-	 */
-        @Override
-	public void ouvertureElectrovanne3Voies() {
-            this.send(ELECTROVANNE3VOIES, OUVRIR);
-	}
-
-	/**
-	 * Ferme l'electrovanne 3 voies
-	 */
-        @Override
-	public void fermetureElectrovanne3Voies() {
-            this.send(ELECTROVANNE3VOIES, FERMER);
-	}
-    
+          
+          
+    }
 }
