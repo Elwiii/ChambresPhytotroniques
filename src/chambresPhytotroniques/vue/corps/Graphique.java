@@ -98,7 +98,7 @@ public class Graphique extends JPanel {
 		double[][] data = new double[2][(list.size() - 50 > 0) ? 50 : list
 				.size()];
 
-		double min = Double.MAX_VALUE, max = Double.MIN_VALUE;
+		double max = Double.MAX_VALUE, min = Double.MIN_VALUE;
 		for (int i = (list.size() - 50 > 0) ? list.size() : 0; i < list.size(); i++) {
 			Valeur val = list.get(i);
 			// data[0] = tableau des Y
