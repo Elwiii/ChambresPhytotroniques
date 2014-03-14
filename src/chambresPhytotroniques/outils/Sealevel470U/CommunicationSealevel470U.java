@@ -232,6 +232,12 @@ public class CommunicationSealevel470U extends Communication{
                 } catch (Exception e) {
               System.out.println(e);
             }
+            
+            System.out.print(String.format("[Sm_WriteDigitalOutputs] : " ));
+            System.out.print(String.format("%x",channel));
+            for (byte by :datab){
+                System.out.print(String.format(" %x", by));
+            }
             err = lib.SM_WriteDigitalOutputs(handle.getValue(), channel, 1, datab);
             if(err<0){
                 chambresPhytotroniques.outils.Error.getError().error("CommunicationSealevel570U", "send","Operation problématique : send("+channel+", "+choix+")", new Exception("Voir API , SM_WriteDigitalOutputs "+err));
