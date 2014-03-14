@@ -199,9 +199,13 @@ public class CommunicationSealevel470U extends Communication{
          * @param choix 
          */
         public void send(int channel,int choix){
+            System.out.println("==================================");         
+            System.out.println("Channel [0-7]:" + (channel -1) );
             if(choix == OUVRIR){
+                System.out.println("=========>Ouverture");
                 for(int i=1;i<17;i++){
                     if(i!= channel){
+                        System.out.println("=========>fermeture");
                         send(i, FERMER);
                     }
                 }
@@ -212,8 +216,10 @@ public class CommunicationSealevel470U extends Communication{
             if(channel>7){
                 handle = seaMAXHandle2;
                 channel = channel - 8;
+                System.out.println("[Boitier 2]");
             }else{
                 handle = seaMAXHandle1;
+                System.out.println("[Boitier 1]");
             }
             Integer b = 1;
             if(choix == 1){
@@ -234,10 +240,12 @@ public class CommunicationSealevel470U extends Communication{
             }
             
             System.out.print(String.format("[Sm_WriteDigitalOutputs] : " ));
-            System.out.print(String.format("%x",channel));
-            for (byte by :datab){
-                System.out.print(String.format(" %x", by));
+            System.out.print(String.format("%02x",channel));
+            System.out.print(" 01");          
+            for (byte by : datab){
+                System.out.print(String.format(" %02x", by));
             }
+            System.out.println();              
             err = lib.SM_WriteDigitalOutputs(handle.getValue(), channel, 1, datab);
             if(err<0){
                 chambresPhytotroniques.outils.Error.getError().error("CommunicationSealevel570U", "send","Operation problématique : send("+channel+", "+choix+")", new Exception("Voir API , SM_WriteDigitalOutputs "+err));
