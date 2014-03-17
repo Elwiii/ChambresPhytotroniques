@@ -124,10 +124,15 @@ public class CommunicationSealevel470U extends Communication{
         initialisationConstantes();
         seaMAXHandle1 = new IntByReference();
         lib = API_Sealevel470U.INSTANCE;
-        err = lib.SM_Open(seaMAXHandle1, "COM"+PORT1);
+        //err = lib.SM_Open(seaMAXHandle1, "COM"+PORT1);    
+
+        err = lib.SM_Open(seaMAXHandle1,"sealevel_rtu://dev/ttyUSB"+PORT1);
         if(err<0){
             chambresPhytotroniques.outils.Error.getError().error("CommunicationSealevel570U", "CommunicationSealevel570U","Impossible d'ouvrir de port "+PORT1, new Exception("Voir API , SM_Open erreur "+err));
         }
+        
+        System.out.println("Java handle = "+seaMAXHandle1.getValue());
+        
         err = lib.SM_SetAnalogInputConfig(seaMAXHandle1.getValue(), API_Sealevel470U.FLOATING, API_Sealevel470U.SINGLE_ENDED);
         if(err<0){
             chambresPhytotroniques.outils.Error.getError().error("CommunicationSealevel570U", 
@@ -154,7 +159,8 @@ public class CommunicationSealevel470U extends Communication{
 
         seaMAXHandle2 = new IntByReference();
         lib = API_Sealevel470U.INSTANCE;
-        err = lib.SM_Open(seaMAXHandle2, "COM"+PORT2);
+        //err = lib.SM_Open(seaMAXHandle2, "COM"+PORT2);
+        err = lib.SM_Open(seaMAXHandle2,"sealevel_rtu://dev/ttyUSB"+PORT2);
         if(err<0){
             chambresPhytotroniques.outils.Error.getError().error("CommunicationSealevel570U", "CommunicationSealevel570U","Impossible d'ouvrir de port "+PORT2, new Exception("Voir API , SM_Open erreur "+err));
         }
@@ -166,6 +172,7 @@ public class CommunicationSealevel470U extends Communication{
               }
         //err = lib.SM_SetAnalogInputConfig(seaMAXHandle2.getValue(), API_Sealevel470U.ANALOG, API_Sealevel470U.SINGLE_ENDED);
         byte analog =1;
+        System.out.println("Java handle = "+seaMAXHandle2.getValue());
         err = lib.SM_SetAnalogInputConfig(seaMAXHandle2.getValue(), analog, API_Sealevel470U.SINGLE_ENDED);
 
         if(err<0){
@@ -199,13 +206,9 @@ public class CommunicationSealevel470U extends Communication{
          * @param choix 
          */
         public void send(int channel,int choix){
-            System.out.println("==================================");         
-            System.out.println("Channel [0-7]:" + (channel -1) );
             if(choix == OUVRIR){
-                System.out.println("=========>Ouverture");
                 for(int i=1;i<17;i++){
                     if(i!= channel){
-                        System.out.println("=========>fermeture");
                         send(i, FERMER);
                     }
                 }
@@ -216,10 +219,8 @@ public class CommunicationSealevel470U extends Communication{
             if(channel>7){
                 handle = seaMAXHandle2;
                 channel = channel - 8;
-                System.out.println("[Boitier 2]");
             }else{
                 handle = seaMAXHandle1;
-                System.out.println("[Boitier 1]");
             }
             Integer b = 1;
             if(choix == 1){
@@ -238,14 +239,6 @@ public class CommunicationSealevel470U extends Communication{
                 } catch (Exception e) {
               System.out.println(e);
             }
-            
-            System.out.print(String.format("[Sm_WriteDigitalOutputs] : " ));
-            System.out.print(String.format("%02x",channel));
-            System.out.print(" 01");          
-            for (byte by : datab){
-                System.out.print(String.format(" %02x", by));
-            }
-            System.out.println();              
             err = lib.SM_WriteDigitalOutputs(handle.getValue(), channel, 1, datab);
             if(err<0){
                 chambresPhytotroniques.outils.Error.getError().error("CommunicationSealevel570U", "send","Operation problématique : send("+channel+", "+choix+")", new Exception("Voir API , SM_WriteDigitalOutputs "+err));
@@ -440,6 +433,8 @@ public class CommunicationSealevel470U extends Communication{
 	 */
         @Override
 	public void positionnementValve2() {
+                
+            System.out.println("Send VALVE2");
             this.send(VALVE2, OUVRIR);
 	}
 

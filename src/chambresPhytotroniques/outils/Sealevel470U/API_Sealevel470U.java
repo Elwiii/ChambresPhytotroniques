@@ -17,7 +17,9 @@ import com.sun.jna.ptr.IntByReference;
  */
 public interface API_Sealevel470U extends Library{
     /* path de la dll SeaMAX.dll */
-    final static String LIB = "bibliotheque\\Dll_Sealevel\\x"+Integer.parseInt(Configuration.getConfiguration().getPropertie("SYSTEM"))+"\\SeaMAX";
+    //final static String LIB = "bibliotheque\\Dll_Sealevel\\x"+Integer.parseInt(Configuration.getConfiguration().getPropertie("SYSTEM"))+"\\SeaMAX";
+    final static String LIB = "seamax";
+
     /* instance de la bibliothèque SeaMAX */
     API_Sealevel470U INSTANCE = (API_Sealevel470U) Native.loadLibrary(LIB, API_Sealevel470U.class);
     
