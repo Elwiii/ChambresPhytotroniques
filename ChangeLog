@@ -1,4 +1,3 @@
-ttt
 2014/03/11 Philippe Carrara
             * initialisation du paramètre "reference" dans SM_SetAnalogInputConfig
               avec API_Sealevel470U.FLOATING et non API_Sealevel470U.ANOALOG
