@@ -2,12 +2,17 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package chambresPhytotroniques.outils.Sealevel470U;
 
 import chambresPhytotroniques.outils.Communication;
 import chambresPhytotroniques.outils.Configuration;
 import com.sun.jna.ptr.IntByReference;
+import java.util.Date;
+
 import static test.TestJNAOUPUT.send;
+
+
 
 /**
  *
@@ -206,6 +211,7 @@ public class CommunicationSealevel470U extends Communication{
          * @param choix 
          */
         public void send(int channel,int choix){
+            if (0 == 1){
             if(choix == OUVRIR){
                 for(int i=1;i<17;i++){
                     if(i!= channel){
@@ -243,6 +249,7 @@ public class CommunicationSealevel470U extends Communication{
             if(err<0){
                 chambresPhytotroniques.outils.Error.getError().error("CommunicationSealevel570U", "send","Operation problématique : send("+channel+", "+choix+")", new Exception("Voir API , SM_WriteDigitalOutputs "+err));
             }
+            }
         }
         
         /*private void closeOther(int channelNotClose){
@@ -256,31 +263,45 @@ public class CommunicationSealevel470U extends Communication{
         
         @Override
 	public void ouvrireHumidite1234() {
+            long t = System.currentTimeMillis();
+            System.out.println("[+"+t+"]   OUVERTURE HUMIDITE1234");
             send(HUMIDITE1234, OUVRIR);
 	}
 
         @Override
 	public void fermerHumidite1234() {
+            long t = System.currentTimeMillis();
+            System.out.println("[+"+t+"]   FERMETURE HUMIDITE1234");
             send(HUMIDITE1234, FERMER);
 	}
 
         @Override
 	public void ouvrirHumidite5678() {
+            long t = System.currentTimeMillis();
+            System.out.println("[+"+t+"]   OUVERTURE HUMIDITE5678");
+            System.out.println("");            
             send(HUMIDITE5678, OUVRIR);
 	}
 
         @Override
 	public void fermetureHumidite5678() {
+            long t = System.currentTimeMillis();
+            System.out.println("[+"+t+"]   FERMETURE HUMIDITE5678");            
+       
             send(HUMIDITE5678, FERMER);
 	}
 
         @Override
 	public void fermetureHumiditeSas() {
+            long t = System.currentTimeMillis();
+            System.out.println("[+"+t+"]   FERMETURE  HUMIDITE_SAS");
             send(HUMIDITE_SAS, FERMER);
 	}
 
         @Override
 	public void ouvrirHumiditeSas() {
+            long t = System.currentTimeMillis();
+            System.out.println("[+"+t+"]   OUVERTURE  HUMIDITE_SAS");
             send(HUMIDITE_SAS, OUVRIR);
 	}
 
@@ -425,6 +446,8 @@ public class CommunicationSealevel470U extends Communication{
 	 */
         @Override
 	public void positionnementValve1() {
+            long t = System.currentTimeMillis();
+            System.out.println("[+"+t+"]   OUVERTURE VALVE1");            
             this.send(VALVE1, OUVRIR);
 	}
 
@@ -433,8 +456,9 @@ public class CommunicationSealevel470U extends Communication{
 	 */
         @Override
 	public void positionnementValve2() {
-                
-            System.out.println("Send VALVE2");
+            long t = System.currentTimeMillis();
+            System.out.println("[+"+t+"]   OUVERTURE VALVE2");                     
+            System.out.println("OUVRIR VALVE2");
             this.send(VALVE2, OUVRIR);
 	}
 
@@ -443,6 +467,8 @@ public class CommunicationSealevel470U extends Communication{
 	 */
         @Override
 	public void positionnementValve3() {
+            long t = System.currentTimeMillis();
+            System.out.println("[+"+t+"]   OUVERTURE VALVE3");     
             this.send(VALVE3, OUVRIR);
 	}
 
@@ -451,6 +477,8 @@ public class CommunicationSealevel470U extends Communication{
 	 */
         @Override
 	public void positionnementValve4() {
+            long t = System.currentTimeMillis();
+            System.out.println("[+"+t+"]   OUVERTURE VALVE4");                 
             this.send(VALVE4, OUVRIR);
 	}
 
@@ -459,6 +487,8 @@ public class CommunicationSealevel470U extends Communication{
 	 */
         @Override
 	public void positionnementValve5() {
+            long t = System.currentTimeMillis();
+            System.out.println("[+"+t+"]   OUVERTURE VALVE5");                 
             this.send(VALVE5, OUVRIR);
 	}
 
@@ -467,6 +497,8 @@ public class CommunicationSealevel470U extends Communication{
 	 */
         @Override
 	public void positionnementValve6() {
+            long t = System.currentTimeMillis();
+            System.out.println("[+"+t+"]   OUVERTURE VALVE6");                 
             this.send(VALVE6, OUVRIR);
 	}
 
@@ -475,6 +507,8 @@ public class CommunicationSealevel470U extends Communication{
 	 */
         @Override
 	public void positionnementValve7() {
+            long t = System.currentTimeMillis();
+            System.out.println("[+"+t+"]   OUVERTURE VALVE7");                 
             this.send(VALVE7, OUVRIR);
 	}
 
@@ -483,6 +517,8 @@ public class CommunicationSealevel470U extends Communication{
 	 */
         @Override
 	public void positionnementValve8() {
+            long t = System.currentTimeMillis();
+            System.out.println("[+"+t+"]   OUVERTURE VALVE8");     
             this.send(VALVE8, OUVRIR);
 	}
 
@@ -491,6 +527,8 @@ public class CommunicationSealevel470U extends Communication{
 	 */
         @Override
 	public void positionnementSas() {
+            long t = System.currentTimeMillis();
+            System.out.println("[+"+t+"]   OUVERTURE POSITIONNEMNT SAS");                 
             this.send(POSITIONEMENT_SAS, OUVRIR);
 	}
 
@@ -499,6 +537,8 @@ public class CommunicationSealevel470U extends Communication{
 	 */
         @Override
 	public void positionnementRejet1() {
+            long t = System.currentTimeMillis();
+            System.out.println("[+"+t+"]   OUVERTURE REJET1");                 
             this.send(REJET1, OUVRIR);
 	}
 
@@ -507,6 +547,8 @@ public class CommunicationSealevel470U extends Communication{
 	 */
         @Override
 	public void positionnementRejet2() {
+            long t = System.currentTimeMillis();
+            System.out.println("[+"+t+"]   OUVERTURE REJET2");                 
             this.send(REJET2, OUVRIR);
 	}
 
@@ -517,6 +559,8 @@ public class CommunicationSealevel470U extends Communication{
 	 */
         @Override
 	public void ouvertureElectrovanne3Voies() {
+            long t = System.currentTimeMillis();
+            System.out.println("[+"+t+"]   OUVERTURE ELECTROVANNE 3 VOIES");                 
             this.send(ELECTROVANNE3VOIES, OUVRIR);
 	}
 
@@ -525,6 +569,8 @@ public class CommunicationSealevel470U extends Communication{
 	 */
         @Override
 	public void fermetureElectrovanne3Voies() {
+            long t = System.currentTimeMillis();
+            System.out.println("[+"+t+"]   FERMETURE ELECTROVANNE 3 VOIES");               
             this.send(ELECTROVANNE3VOIES, FERMER);
 	}
     
